@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Студія · Андрій Красік</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #2B1A3D;
+  --navy-2: #3A2354;
+  --ink: #1A0E26;
+  --muted: #6B5B7A;
+  --line: #EFE6F0;
+  --bg: #FBF7F9;
+  --white: #FFFFFF;
+  --accent: #E8A87C;
+  --mint: #85C88A;
+  --mint-dark: #2F8833;
+  --pink: #FF6B9A;
+  --rose: #D64F87;
+  --red: #E63946;
+  --amber: #F5B841;
+  --radius: 20px;
+  --shadow-sm: 0 2px 10px rgba(43,26,61,0.06);
+  --shadow-md: 0 12px 40px rgba(43,26,61,0.10);
+  --shadow-lg: 0 30px 80px rgba(43,26,61,0.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Manrope',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,h4{line-height:1.2;letter-spacing:-0.02em;font-weight:700}
+h1{font-size:clamp(32px,5vw,52px);font-weight:800;letter-spacing:-0.03em}
+h2{font-size:clamp(22px,3vw,30px)}
+h3{font-size:19px}
+h4{font-size:15px;font-weight:700}
+p{font-size:16px;color:var(--muted);line-height:1.7}
+button{font-family:inherit;cursor:pointer;border:0}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:50;background:rgba(251,247,249,.88);backdrop-filter:saturate(180%) blur(16px);border-bottom:1px solid var(--line)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:14px}
+.logo-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--navy),var(--rose));color:var(--white);display:grid;place-items:center;font-weight:800;font-size:13px}
+.logo-text small{color:var(--muted);font-weight:500;display:block;font-size:11px}
+.nav-right{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--muted);font-weight:500}
+.mode-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:rgba(214,79,135,.1);color:var(--rose);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.05em}
+.mode-badge::before{content:'●';font-size:9px}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--navy),var(--navy-2));color:var(--white);position:relative;overflow:hidden;padding:72px 0 90px}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(255,107,154,.2) 0%,transparent 50%),radial-gradient(circle at 20% 80%,rgba(232,168,124,.14) 0%,transparent 50%)}
+.hero::after{content:'';position:absolute;inset:0;opacity:.2;background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,.2) 1px,transparent 0);background-size:24px 24px}
+.hero-inner{position:relative;z-index:1}
+.tag{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);font-size:13px;color:rgba(255,255,255,.9);margin-bottom:18px}
+.tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--pink);box-shadow:0 0 10px var(--pink)}
+.hero h1{color:var(--white);margin-bottom:14px}
+.hero h1 span{background:linear-gradient(135deg,var(--accent),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:rgba(255,255,255,.8);max-width:640px;font-size:17px}
+.hero-stats{display:flex;gap:28px;margin-top:34px;flex-wrap:wrap}
+.hero-stat{display:flex;flex-direction:column}
+.hero-stat .num{font-size:32px;font-weight:800;color:var(--white);letter-spacing:-0.02em;line-height:1}
+.hero-stat .lbl{font-size:12px;color:rgba(255,255,255,.6);font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-top:6px}
+
+/* PROJECTS */
+.projects-wrap{margin-top:-50px;position:relative;z-index:2}
+.projects-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap;padding:0 2px}
+.projects-head h2{color:var(--white)}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.filter-btn{padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.1);color:var(--white);font-size:12px;font-weight:600;border:1px solid rgba(255,255,255,.2);transition:all .15s}
+.filter-btn:hover,.filter-btn.active{background:var(--white);color:var(--navy);border-color:var(--white)}
+
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.project-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow-sm);transition:all .2s;position:relative;display:flex;flex-direction:column;gap:14px}
+.project-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.project-card.archived{opacity:.55}
+.project-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.project-title{font-size:19px;font-weight:800;color:var(--ink);margin-bottom:3px;line-height:1.2}
+.project-client{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:2px}
+.project-niche{font-size:12px;color:var(--muted)}
+.status-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;flex-shrink:0;cursor:default}
+.status-pill.active{background:rgba(133,200,138,.14);color:var(--mint-dark)}
+.status-pill.active::before{content:'●';color:var(--mint);font-size:9px}
+.status-pill.paused{background:rgba(245,184,65,.14);color:#8B6914}
+.status-pill.paused::before{content:'●';color:var(--amber);font-size:9px}
+.status-pill.archived{background:rgba(107,91,122,.12);color:var(--muted)}
+.status-pill.archived::before{content:'■';font-size:8px}
+body.admin .status-pill{cursor:pointer}
+
+.project-progress{padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.progress-line{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.progress-line .l{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.06em}
+.progress-line .v{font-size:16px;font-weight:800;color:var(--navy)}
+.progress-line .v small{font-size:12px;color:var(--muted);font-weight:600}
+.progress-bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--rose),var(--pink));transition:width .6s;border-radius:3px}
+.project-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-weight:600}
+
+.project-actions{display:flex;flex-direction:column;gap:6px;margin-top:auto}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 14px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;transition:all .15s;cursor:pointer;border:0;font-family:inherit}
+.btn-primary{background:var(--navy);color:var(--white)}
+.btn-primary:hover{background:var(--navy-2)}
+.btn-ghost{background:var(--bg);color:var(--navy);border:1px solid var(--line)}
+.btn-ghost:hover{background:var(--line);border-color:var(--muted)}
+.btn-rose{background:var(--rose);color:var(--white)}
+.btn-rose:hover{background:var(--pink)}
+.btn-mini{padding:7px 10px;font-size:11px}
+.actions-row{display:flex;gap:6px}
+.actions-row .btn{flex:1}
+
+.copy-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:var(--white);padding:12px 22px;border-radius:12px;font-size:13px;font-weight:700;box-shadow:var(--shadow-lg);opacity:0;transition:all .3s;z-index:100;pointer-events:none}
+.copy-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.empty{background:var(--white);border:2px dashed var(--line);border-radius:var(--radius);padding:60px 30px;text-align:center;color:var(--muted)}
+.empty h3{color:var(--ink);margin-bottom:8px}
+
+/* ADMIN FORM */
+.admin-only{display:none}
+body.admin .admin-only{display:block}
+.admin-panel{position:fixed;bottom:24px;right:24px;background:var(--white);border:2px solid var(--rose);border-radius:16px;padding:16px;box-shadow:var(--shadow-lg);z-index:60;max-width:340px;display:none}
+.admin-panel.visible{display:block}
+.admin-panel h4{margin-bottom:10px;display:flex;align-items:center;gap:8px;color:var(--rose)}
+.admin-panel h4::before{content:'●';color:var(--rose);font-size:10px}
+.admin-panel p{font-size:12px;margin-bottom:10px}
+.admin-btn{width:100%;padding:10px;background:var(--rose);color:var(--white);border-radius:10px;font-weight:700;font-size:13px;margin-top:6px;border:0;cursor:pointer;font-family:inherit}
+.admin-btn:hover{background:var(--pink)}
+.admin-btn.ghost{background:transparent;color:var(--rose);border:1px solid var(--rose)}
+.admin-unsaved{display:inline-block;padding:3px 10px;border-radius:999px;background:var(--amber);color:var(--ink);font-size:11px;font-weight:700;margin-left:8px}
+
+.modal-bg{position:fixed;inset:0;background:rgba(26,14,38,.6);z-index:70;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal-bg.visible{display:flex}
+.modal{background:var(--white);border-radius:var(--radius);padding:28px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
+.modal h3{margin-bottom:6px}
+.modal p.subtitle{margin-bottom:18px;font-size:13px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px;background:var(--white);color:var(--ink)}
+.field input:focus,.field select:focus,.field textarea:focus{outline:0;border-color:var(--rose);box-shadow:0 0 0 3px rgba(214,79,135,.1)}
+.field small{display:block;font-size:11px;color:var(--muted);margin-top:4px;font-weight:500}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+
+.add-card{background:transparent;border:2px dashed var(--rose);border-radius:var(--radius);padding:22px;min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;transition:all .15s;color:var(--rose);font-weight:700}
+.add-card:hover{background:rgba(214,79,135,.04)}
+.add-card .plus{width:50px;height:50px;border-radius:50%;background:var(--rose);color:var(--white);display:grid;place-items:center;font-size:26px;font-weight:800}
+
+/* FOOTER */
+footer{padding:40px 0;border-top:1px solid var(--line);background:var(--white);margin-top:60px}
+.footer-inner{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.footer-author{display:flex;align-items:center;gap:12px}
+.footer-author strong{color:var(--ink);font-weight:700}
+
+@media(max-width:640px){
+  .hero{padding:50px 0 80px}
+  .projects-grid{grid-template-columns:1fr}
+  .admin-panel{bottom:16px;right:16px;left:16px;max-width:none}
+  .modal{padding:22px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="logo">
+      <div class="logo-mark">АК</div>
+      <div>
+        <div>Студія Андрія Красіка</div>
+        <small>Дашборд проєктів</small>
+      </div>
+    </div>
+    <div class="nav-right">
+      <span class="mode-badge admin-only">Адмін-режим</span>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero-inner">
+    <span class="tag">Студія клієнтських проєктів · <span id="today">—</span></span>
+    <h1>Всі <span>проєкти</span> в одному кабінеті</h1>
+    <p>Єдиний центр керування для аудитів, прогрес-трекерів і комунікації з клієнтами. Кожна картка — повна історія проєкту і швидкий доступ до його сторінок.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num" id="stat-active">—</div><div class="lbl">Активних проєктів</div></div>
+      <div class="hero-stat"><div class="num" id="stat-done">—</div><div class="lbl">Задач виконано</div></div>
+      <div class="hero-stat"><div class="num" id="stat-total">—</div><div class="lbl">Всього задач</div></div>
+      <div class="hero-stat"><div class="num" id="stat-avg">—</div><div class="lbl">Середній прогрес</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section>
+  <div class="wrap projects-wrap">
+    <div class="projects-head">
+      <h2>Мої проєкти</h2>
+      <div class="filters" id="filters">
+        <button class="filter-btn active" data-filter="all">Всі</button>
+        <button class="filter-btn" data-filter="active">Активні</button>
+        <button class="filter-btn" data-filter="paused">На паузі</button>
+        <button class="filter-btn" data-filter="archived">Архів</button>
+      </div>
+    </div>
+    <div class="projects-grid" id="projects-grid"></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-author">
+        <div class="logo-mark">АК</div>
+        <div>
+          <strong>Андрій Красік</strong><br>
+          <span>Маркетинг-аналітик · Київ</span>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--muted)">
+        Персональний дашборд · <span id="proj-count">0</span> проєктів у системі
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ADMIN PANEL -->
+<div class="admin-panel" id="admin-panel">
+  <h4>Адмін-режим</h4>
+  <p id="admin-status">Зміни ще не збережено.</p>
+  <button class="admin-btn" onclick="saveData()">💾 Зберегти дашборд</button>
+  <button class="admin-btn ghost" onclick="openAddModal()" style="margin-top:8px">+ Додати проєкт</button>
+  <button class="admin-btn ghost" onclick="resetPat()" style="margin-top:8px;font-size:11px;padding:6px">Скинути GitHub токен</button>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal">
+    <h3 id="modal-title">Додати проєкт</h3>
+    <p class="subtitle">Заповни базові дані. Репозиторій зі сторінками створюється окремо — там живуть аудит і прогрес.</p>
+    <div class="field">
+      <label>Slug (для URL)</label>
+      <input type="text" id="f-slug" placeholder="bila-troyanda" />
+      <small>Латиниця, без пробілів. З цього формується посилання: https://krasprod.github.io/{slug}/</small>
+    </div>
+    <div class="field">
+      <label>Назва бізнесу</label>
+      <input type="text" id="f-name" placeholder="Салон Біла Троянда" />
+    </div>
+    <div class="field">
+      <label>Ім'я клієнта</label>
+      <input type="text" id="f-client" placeholder="Олена Петренко" />
+    </div>
+    <div class="field">
+      <label>Ніша / локація</label>
+      <input type="text" id="f-niche" placeholder="Салон краси · Печерськ, Київ" />
+    </div>
+    <div class="field">
+      <label>Repo (для live-прогресу)</label>
+      <input type="text" id="f-repo" placeholder="krasprod/bila-troyanda-audit" />
+      <small>Якщо у репо є data.json — картка показуватиме реальний % виконаних задач.</small>
+    </div>
+    <div class="field">
+      <label>Admin-ключ (для URL-доступу)</label>
+      <input type="text" id="f-key" placeholder="bila2026" />
+      <small>Використовується у посиланні на прогрес-сторінку: ?admin={ключ}</small>
+    </div>
+    <div class="field">
+      <label>Статус</label>
+      <select id="f-status">
+        <option value="active">Активний</option>
+        <option value="paused">На паузі</option>
+        <option value="archived">Архів</option>
+      </select>
+    </div>
+    <input type="hidden" id="f-index" value="" />
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Скасувати</button>
+      <button class="btn btn-rose" onclick="saveProject()">Зберегти</button>
+    </div>
+  </div>
+</div>
+
+<div class="copy-toast" id="toast">Скопійовано у буфер обміну</div>
+
+<script>
+const REPO = 'krasprod/studio';
+const DATA_PATH = 'projects.json';
+const ADMIN_KEY_PARAM = 'krasik2026';
+
+let state = { data: null, dirty: false, sha: null, admin: false, progressCache: {}, currentFilter: 'all' };
+
+async function init() {
+  const urlParams = new URLSearchParams(window.location.search);
+  state.admin = urlParams.get('admin') === ADMIN_KEY_PARAM;
+  if (state.admin) {
+    document.body.classList.add('admin');
+    document.getElementById('admin-panel').classList.add('visible');
+  }
+  document.getElementById('today').textContent = new Date().toLocaleDateString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' });
+  await loadData();
+  bindFilters();
+  render();
+  loadAllProgress();
+}
+
+async function loadData() {
+  try {
+    const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${DATA_PATH}?t=${Date.now()}`);
+    const j = await r.json();
+    state.data = JSON.parse(decodeURIComponent(escape(atob(j.content))));
+    state.sha = j.sha;
+  } catch (e) {
+    const r = await fetch(`./${DATA_PATH}?t=${Date.now()}`);
+    state.data = await r.json();
+  }
+}
+
+async function loadAllProgress() {
+  for (const p of state.data.projects) {
+    if (!p.repo) continue;
+    try {
+      const path = p.data_path || 'data.json';
+      const r = await fetch(`https://api.github.com/repos/${p.repo}/contents/${path}?t=${Date.now()}`);
+      const j = await r.json();
+      const data = JSON.parse(decodeURIComponent(escape(atob(j.content))));
+      const all = (data.phases || []).flatMap(ph => ph.tasks || []);
+      const done = all.filter(t => t.done).length;
+      const pendingReqs = (data.phases || []).flatMap(ph => ph.client_requests || []).filter(r => r.status === 'pending').length;
+      state.progressCache[p.slug] = {
+        total: all.length,
+        done: done,
+        pct: all.length ? Math.round(done / all.length * 100) : 0,
+        last_updated: data.project?.last_updated,
+        pending_reqs: pendingReqs
+      };
+      render();
+    } catch (e) {
+      state.progressCache[p.slug] = null;
+    }
+  }
+}
+
+function bindFilters() {
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.currentFilter = btn.dataset.filter;
+      render();
+    };
+  });
+}
+
+function render() {
+  const projects = state.data.projects || [];
+  const filtered = state.currentFilter === 'all' ? projects : projects.filter(p => (p.status || 'active') === state.currentFilter);
+
+  // Hero stats
+  const activeProjects = projects.filter(p => (p.status || 'active') === 'active');
+  const progresses = activeProjects.map(p => state.progressCache[p.slug]).filter(Boolean);
+  const totalTasks = progresses.reduce((s, p) => s + p.total, 0);
+  const doneTasks = progresses.reduce((s, p) => s + p.done, 0);
+  const avgPct = progresses.length ? Math.round(progresses.reduce((s, p) => s + p.pct, 0) / progresses.length) : 0;
+  document.getElementById('stat-active').textContent = activeProjects.length;
+  document.getElementById('stat-done').textContent = doneTasks || '—';
+  document.getElementById('stat-total').textContent = totalTasks || '—';
+  document.getElementById('stat-avg').textContent = progresses.length ? avgPct + '%' : '—';
+  document.getElementById('proj-count').textContent = projects.length;
+
+  // Grid
+  const grid = document.getElementById('projects-grid');
+  grid.innerHTML = '';
+  if (!filtered.length && !state.admin) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><h3>Проєктів поки немає</h3><p>У цьому фільтрі пусто.</p></div>';
+  }
+  filtered.forEach((p, idx) => {
+    const realIdx = projects.indexOf(p);
+    grid.appendChild(renderCard(p, realIdx));
+  });
+  if (state.admin) {
+    const add = document.createElement('div');
+    add.className = 'add-card';
+    add.onclick = openAddModal;
+    add.innerHTML = `<div class="plus">+</div><div>Додати новий проєкт</div>`;
+    grid.appendChild(add);
+  }
+}
+
+function renderCard(p, idx) {
+  const cache = state.progressCache[p.slug];
+  const statusLabel = { active: 'Активний', paused: 'На паузі', archived: 'Архів' }[p.status || 'active'] || p.status;
+  const startedFmt = p.started ? new Date(p.started).toLocaleDateString('uk-UA', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+  const updatedFmt = cache?.last_updated ? 'оновлено ' + new Date(cache.last_updated).toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' }) : '';
+
+  const el = document.createElement('div');
+  el.className = 'project-card' + (p.status === 'archived' ? ' archived' : '');
+  el.innerHTML = `
+    <div class="project-head">
+      <div>
+        <div class="project-title">${p.name || '—'}</div>
+        <div class="project-client">${p.client || '—'}</div>
+        <div class="project-niche">${p.niche || ''}</div>
+      </div>
+      <span class="status-pill ${p.status || 'active'}" ${state.admin ? `onclick="cycleStatus(${idx})"` : ''} title="${state.admin ? 'Клік — змінити статус' : ''}">${statusLabel}</span>
+    </div>
+    <div class="project-progress">
+      <div class="progress-line">
+        <span class="l">Прогрес задач</span>
+        <span class="v">${cache ? cache.pct : '—'}<small>${cache ? '% · ' + cache.done + '/' + cache.total : ''}</small></span>
+      </div>
+      <div class="progress-bar"><div class="progress-bar-fill" style="width:${cache?.pct || 0}%"></div></div>
+      ${cache?.pending_reqs ? `<div style="font-size:11px;color:#8B6914;font-weight:700;margin-top:8px;text-transform:uppercase;letter-spacing:0.05em">⚠ ${cache.pending_reqs} ${pluralize(cache.pending_reqs, 'запит', 'запити', 'запитів')} чекає на клієнта</div>` : ''}
+    </div>
+    <div class="project-meta">
+      <span>Старт: ${startedFmt}</span>
+      <span>${updatedFmt}</span>
+    </div>
+    <div class="project-actions">
+      <a class="btn btn-primary" href="${buildAdminUrl(p)}" target="_blank">🔐 Відкрити як адмін →</a>
+      <div class="actions-row">
+        <button class="btn btn-ghost btn-mini" onclick="copyLink('${p.links?.progress || ''}', this)">📋 Посилання для клієнта</button>
+        <a class="btn btn-ghost btn-mini" href="${p.links?.audit || '#'}" target="_blank">📄 Аудит</a>
+      </div>
+      ${state.admin ? `
+        <div class="actions-row" style="margin-top:6px">
+          <button class="btn btn-ghost btn-mini" onclick="openEditModal(${idx})" style="color:var(--rose)">✏ Редагувати</button>
+          <button class="btn btn-ghost btn-mini" onclick="deleteProject(${idx})" style="color:var(--red)">× Видалити</button>
+        </div>
+      ` : ''}
+    </div>
+  `;
+  return el;
+}
+
+function buildAdminUrl(p) {
+  if (!p.links?.progress) return '#';
+  const sep = p.links.progress.includes('?') ? '&' : '?';
+  return `${p.links.progress}${sep}admin=${p.admin_key || ''}`;
+}
+
+function copyLink(url, btn) {
+  if (!url) { alert('Посилання ще не налаштовано'); return; }
+  navigator.clipboard.writeText(url).then(() => {
+    showToast('Посилання для клієнта скопійовано');
+    const orig = btn.textContent;
+    btn.textContent = '✓ Скопійовано';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+
+function showToast(text) {
+  const t = document.getElementById('toast');
+  t.textContent = text;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function pluralize(n, one, few, many) {
+  const mod10 = n % 10, mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return one;
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
+  return many;
+}
+
+function cycleStatus(idx) {
+  const p = state.data.projects[idx];
+  const next = { active: 'paused', paused: 'archived', archived: 'active' };
+  p.status = next[p.status || 'active'];
+  markDirty();
+  render();
+}
+
+function openAddModal() {
+  document.getElementById('modal-title').textContent = 'Додати проєкт';
+  ['f-slug','f-name','f-client','f-niche','f-repo','f-key'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-status').value = 'active';
+  document.getElementById('f-index').value = '';
+  document.getElementById('modal-bg').classList.add('visible');
+}
+
+function openEditModal(idx) {
+  const p = state.data.projects[idx];
+  document.getElementById('modal-title').textContent = 'Редагувати проєкт';
+  document.getElementById('f-slug').value = p.slug || '';
+  document.getElementById('f-name').value = p.name || '';
+  document.getElementById('f-client').value = p.client || '';
+  document.getElementById('f-niche').value = p.niche || '';
+  document.getElementById('f-repo').value = p.repo || '';
+  document.getElementById('f-key').value = p.admin_key || '';
+  document.getElementById('f-status').value = p.status || 'active';
+  document.getElementById('f-index').value = idx;
+  document.getElementById('modal-bg').classList.add('visible');
+}
+
+function closeModal() {
+  document.getElementById('modal-bg').classList.remove('visible');
+}
+
+function saveProject() {
+  const slug = document.getElementById('f-slug').value.trim();
+  const name = document.getElementById('f-name').value.trim();
+  if (!slug || !name) { alert('Slug і назва обов\'язкові'); return; }
+  const idxRaw = document.getElementById('f-index').value;
+  const data = {
+    slug,
+    name,
+    client: document.getElementById('f-client').value.trim(),
+    niche: document.getElementById('f-niche').value.trim(),
+    repo: document.getElementById('f-repo').value.trim(),
+    admin_key: document.getElementById('f-key').value.trim(),
+    status: document.getElementById('f-status').value,
+    data_path: 'data.json',
+    links: {
+      audit: `https://krasprod.github.io/${slug}/`,
+      progress: `https://krasprod.github.io/${slug}/progress.html`
+    }
+  };
+  if (idxRaw === '') {
+    data.started = new Date().toISOString().slice(0,10);
+    data.notes = '';
+    state.data.projects.push(data);
+  } else {
+    const idx = parseInt(idxRaw, 10);
+    const existing = state.data.projects[idx];
+    state.data.projects[idx] = { ...existing, ...data };
+  }
+  closeModal();
+  markDirty();
+  render();
+  loadAllProgress();
+}
+
+function deleteProject(idx) {
+  const p = state.data.projects[idx];
+  if (!confirm(`Видалити проєкт «${p.name}»?\n\nЦе лише видалить його з дашборду. Репозиторій ${p.repo || ''} залишиться на GitHub.`)) return;
+  state.data.projects.splice(idx, 1);
+  markDirty();
+  render();
+}
+
+function markDirty() {
+  state.dirty = true;
+  state.data.studio.last_updated = new Date().toISOString();
+  document.getElementById('admin-status').innerHTML = '<span class="admin-unsaved">НЕ ЗБЕРЕЖЕНО</span>';
+}
+
+async function saveData() {
+  let pat = localStorage.getItem('gh_pat_studio');
+  if (!pat) {
+    pat = prompt('Введи GitHub Personal Access Token з правом Contents: Write на репо krasprod/studio.\n\nСтворити: https://github.com/settings/tokens?type=beta');
+    if (!pat) return;
+    localStorage.setItem('gh_pat_studio', pat);
+  }
+  document.getElementById('admin-status').textContent = 'Зберігаємо...';
+  try {
+    const content = JSON.stringify(state.data, null, 2);
+    const b64 = btoa(unescape(encodeURIComponent(content)));
+    const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${DATA_PATH}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${pat}`,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: 'Update studio projects',
+        content: b64,
+        sha: state.sha
+      })
+    });
+    if (!r.ok) {
+      const err = await r.json();
+      throw new Error(err.message || 'Unknown error');
+    }
+    const j = await r.json();
+    state.sha = j.content.sha;
+    state.dirty = false;
+    document.getElementById('admin-status').innerHTML = '✓ Збережено. GitHub Pages оновиться за ~1 хв.';
+    setTimeout(() => {
+      if (!state.dirty) document.getElementById('admin-status').textContent = 'Зміни ще не збережено.';
+    }, 5000);
+  } catch (e) {
+    document.getElementById('admin-status').textContent = '❌ Помилка: ' + e.message;
+    if (e.message.includes('401') || e.message.includes('Bad credentials')) {
+      localStorage.removeItem('gh_pat_studio');
+    }
+  }
+}
+
+function resetPat() {
+  localStorage.removeItem('gh_pat_studio');
+  alert('Токен видалено. При наступному збереженні запитає знову.');
+}
+
+init();
+</script>
+</body>
+</html>

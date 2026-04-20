@@ -1,0 +1,26 @@
+{
+  "studio": {
+    "owner": "Андрій Красік",
+    "role": "Маркетинг-аналітик · таргетолог",
+    "city": "Київ",
+    "last_updated": "2026-04-20T15:00:00"
+  },
+  "projects": [
+    {
+      "slug": "fajna-audit",
+      "name": "Файна Перукарня",
+      "client": "Людмила Чумак",
+      "niche": "Салон краси · Поділ, Київ",
+      "status": "active",
+      "started": "2026-04-20",
+      "repo": "krasprod/fajna-audit",
+      "admin_key": "fajna2026",
+      "data_path": "data.json",
+      "links": {
+        "audit": "https://krasprod.github.io/fajna-audit/",
+        "progress": "https://krasprod.github.io/fajna-audit/progress.html"
+      },
+      "notes": ""
+    }
+  ]
+}
