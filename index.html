@@ -89,6 +89,8 @@ button{font-family:inherit;cursor:pointer;border:0}
 .status-pill.paused::before{content:'●';color:var(--amber);font-size:9px}
 .status-pill.archived{background:rgba(107,91,122,.12);color:var(--muted)}
 .status-pill.archived::before{content:'■';font-size:8px}
+.status-pill.review{background:rgba(232,168,124,.18);color:#9F5A2E}
+.status-pill.review::before{content:'●';color:var(--accent);font-size:9px}
 body.admin .status-pill{cursor:pointer}
 
 .project-progress{padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
@@ -202,6 +204,7 @@ footer{padding:40px 0;border-top:1px solid var(--line);background:var(--white);m
       <div class="filters" id="filters">
         <button class="filter-btn active" data-filter="all">Всі</button>
         <button class="filter-btn" data-filter="active">Активні</button>
+        <button class="filter-btn" data-filter="review">На утвердженні</button>
         <button class="filter-btn" data-filter="paused">На паузі</button>
         <button class="filter-btn" data-filter="archived">Архів</button>
       </div>
@@ -241,14 +244,21 @@ footer{padding:40px 0;border-top:1px solid var(--line);background:var(--white);m
 <div class="modal-bg" id="modal-bg">
   <div class="modal">
     <h3 id="modal-title">Додати проєкт</h3>
-    <p class="subtitle">Заповни базові дані. Репозиторій зі сторінками створюється окремо — там живуть аудит і прогрес.</p>
+    <p class="subtitle">Заповни базові дані. GitHub-проєкти мають прогрес-трекер у репо; зовнішні — це просто посилання на готовий ресурс (Netlify, Google Sheets, Notion тощо).</p>
     <div class="field">
-      <label>Slug (для URL)</label>
-      <input type="text" id="f-slug" placeholder="bila-troyanda" />
-      <small>Латиниця, без пробілів. З цього формується посилання: https://krasprod.github.io/{slug}/</small>
+      <label>Тип проєкту</label>
+      <select id="f-type" onchange="toggleTypeFields()">
+        <option value="github">GitHub-проєкт (з прогрес-трекером)</option>
+        <option value="external">Зовнішнє посилання (без трекера)</option>
+      </select>
     </div>
     <div class="field">
-      <label>Назва бізнесу</label>
+      <label>Slug (ідентифікатор)</label>
+      <input type="text" id="f-slug" placeholder="bila-troyanda" />
+      <small>Латиниця, без пробілів. Має бути унікальним.</small>
+    </div>
+    <div class="field">
+      <label>Назва проєкту / бізнесу</label>
       <input type="text" id="f-name" placeholder="Салон Біла Троянда" />
     </div>
     <div class="field">
@@ -259,12 +269,17 @@ footer{padding:40px 0;border-top:1px solid var(--line);background:var(--white);m
       <label>Ніша / локація</label>
       <input type="text" id="f-niche" placeholder="Салон краси · Печерськ, Київ" />
     </div>
-    <div class="field">
+    <div class="field" data-type="external">
+      <label>URL проєкту</label>
+      <input type="text" id="f-main" placeholder="https://deft-boba-7cc3db.netlify.app/" />
+      <small>Пряме посилання, яке відкривається у картці.</small>
+    </div>
+    <div class="field" data-type="github">
       <label>Repo (для live-прогресу)</label>
       <input type="text" id="f-repo" placeholder="krasprod/bila-troyanda-audit" />
       <small>Якщо у репо є data.json — картка показуватиме реальний % виконаних задач.</small>
     </div>
-    <div class="field">
+    <div class="field" data-type="github">
       <label>Admin-ключ (для URL-доступу)</label>
       <input type="text" id="f-key" placeholder="bila2026" />
       <small>Використовується у посиланні на прогрес-сторінку: ?admin={ключ}</small>
@@ -273,9 +288,14 @@ footer{padding:40px 0;border-top:1px solid var(--line);background:var(--white);m
       <label>Статус</label>
       <select id="f-status">
         <option value="active">Активний</option>
+        <option value="review">На утвердженні</option>
         <option value="paused">На паузі</option>
         <option value="archived">Архів</option>
       </select>
+    </div>
+    <div class="field">
+      <label>Замітки (видно на картці)</label>
+      <textarea id="f-notes" rows="2" placeholder="Наприклад: клієнт перевіряє таблицю, чекаємо ок / правки"></textarea>
     </div>
     <input type="hidden" id="f-index" value="" />
     <div class="modal-actions">
@@ -322,7 +342,7 @@ async function loadData() {
 
 async function loadAllProgress() {
   for (const p of state.data.projects) {
-    if (!p.repo) continue;
+    if (!p.repo || p.type === 'external') continue;
     try {
       const path = p.data_path || 'data.json';
       const r = await fetch(`https://api.github.com/repos/${p.repo}/contents/${path}?t=${Date.now()}`);
@@ -393,21 +413,25 @@ function render() {
 
 function renderCard(p, idx) {
   const cache = state.progressCache[p.slug];
-  const statusLabel = { active: 'Активний', paused: 'На паузі', archived: 'Архів' }[p.status || 'active'] || p.status;
+  const statusLabel = { active: 'Активний', paused: 'На паузі', archived: 'Архів', review: 'На утвердженні' }[p.status || 'active'] || p.status;
   const startedFmt = p.started ? new Date(p.started).toLocaleDateString('uk-UA', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
   const updatedFmt = cache?.last_updated ? 'оновлено ' + new Date(cache.last_updated).toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' }) : '';
+  const isExternal = !p.repo || p.type === 'external';
+  const mainUrl = p.links?.main || p.links?.progress || p.links?.audit || '';
+  const clientUrl = p.links?.client || p.links?.progress || p.links?.main || p.links?.audit || '';
 
   const el = document.createElement('div');
   el.className = 'project-card' + (p.status === 'archived' ? ' archived' : '');
-  el.innerHTML = `
-    <div class="project-head">
-      <div>
-        <div class="project-title">${p.name || '—'}</div>
-        <div class="project-client">${p.client || '—'}</div>
-        <div class="project-niche">${p.niche || ''}</div>
+
+  const progressBlock = isExternal ? `
+    <div class="project-progress">
+      <div class="progress-line">
+        <span class="l">Тип проєкту</span>
+        <span class="v" style="font-size:13px;font-weight:700">Зовнішнє посилання</span>
       </div>
-      <span class="status-pill ${p.status || 'active'}" ${state.admin ? `onclick="cycleStatus(${idx})"` : ''} title="${state.admin ? 'Клік — змінити статус' : ''}">${statusLabel}</span>
+      ${p.notes ? `<div style="font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5">${p.notes}</div>` : ''}
     </div>
+  ` : `
     <div class="project-progress">
       <div class="progress-line">
         <span class="l">Прогрес задач</span>
@@ -416,14 +440,24 @@ function renderCard(p, idx) {
       <div class="progress-bar"><div class="progress-bar-fill" style="width:${cache?.pct || 0}%"></div></div>
       ${cache?.pending_reqs ? `<div style="font-size:11px;color:#8B6914;font-weight:700;margin-top:8px;text-transform:uppercase;letter-spacing:0.05em">⚠ ${cache.pending_reqs} ${pluralize(cache.pending_reqs, 'запит', 'запити', 'запитів')} чекає на клієнта</div>` : ''}
     </div>
-    <div class="project-meta">
-      <span>Старт: ${startedFmt}</span>
-      <span>${updatedFmt}</span>
+  `;
+
+  const actionsBlock = isExternal ? `
+    <div class="project-actions">
+      <a class="btn btn-primary" href="${mainUrl || '#'}" target="_blank">🔗 Відкрити проєкт →</a>
+      <button class="btn btn-ghost btn-mini" onclick="copyLink('${mainUrl}', this)">📋 Скопіювати посилання</button>
+      ${state.admin ? `
+        <div class="actions-row" style="margin-top:6px">
+          <button class="btn btn-ghost btn-mini" onclick="openEditModal(${idx})" style="color:var(--rose)">✏ Редагувати</button>
+          <button class="btn btn-ghost btn-mini" onclick="deleteProject(${idx})" style="color:var(--red)">× Видалити</button>
+        </div>
+      ` : ''}
     </div>
+  ` : `
     <div class="project-actions">
       <a class="btn btn-primary" href="${buildAdminUrl(p)}" target="_blank">🔐 Відкрити як адмін →</a>
       <div class="actions-row">
-        <button class="btn btn-ghost btn-mini" onclick="copyLink('${p.links?.progress || ''}', this)">📋 Посилання для клієнта</button>
+        <button class="btn btn-ghost btn-mini" onclick="copyLink('${clientUrl}', this)">📋 Посилання для клієнта</button>
         <a class="btn btn-ghost btn-mini" href="${p.links?.audit || '#'}" target="_blank">📄 Аудит</a>
       </div>
       ${state.admin ? `
@@ -433,6 +467,23 @@ function renderCard(p, idx) {
         </div>
       ` : ''}
     </div>
+  `;
+
+  el.innerHTML = `
+    <div class="project-head">
+      <div>
+        <div class="project-title">${p.name || '—'}</div>
+        <div class="project-client">${p.client || '—'}</div>
+        <div class="project-niche">${p.niche || ''}</div>
+      </div>
+      <span class="status-pill ${p.status || 'active'}" ${state.admin ? `onclick="cycleStatus(${idx})"` : ''} title="${state.admin ? 'Клік — змінити статус' : ''}">${statusLabel}</span>
+    </div>
+    ${progressBlock}
+    <div class="project-meta">
+      <span>Старт: ${startedFmt}</span>
+      <span>${updatedFmt}</span>
+    </div>
+    ${actionsBlock}
   `;
   return el;
 }
@@ -469,31 +520,45 @@ function pluralize(n, one, few, many) {
 
 function cycleStatus(idx) {
   const p = state.data.projects[idx];
-  const next = { active: 'paused', paused: 'archived', archived: 'active' };
-  p.status = next[p.status || 'active'];
+  const next = { active: 'review', review: 'paused', paused: 'archived', archived: 'active' };
+  p.status = next[p.status || 'active'] || 'active';
   markDirty();
   render();
 }
 
+function toggleTypeFields() {
+  const type = document.getElementById('f-type').value;
+  document.querySelectorAll('[data-type]').forEach(el => {
+    el.style.display = el.dataset.type === type ? '' : 'none';
+  });
+}
+
 function openAddModal() {
   document.getElementById('modal-title').textContent = 'Додати проєкт';
-  ['f-slug','f-name','f-client','f-niche','f-repo','f-key'].forEach(id => document.getElementById(id).value = '');
+  ['f-slug','f-name','f-client','f-niche','f-repo','f-key','f-main','f-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-type').value = 'github';
   document.getElementById('f-status').value = 'active';
   document.getElementById('f-index').value = '';
+  toggleTypeFields();
   document.getElementById('modal-bg').classList.add('visible');
 }
 
 function openEditModal(idx) {
   const p = state.data.projects[idx];
+  const isExt = !p.repo || p.type === 'external';
   document.getElementById('modal-title').textContent = 'Редагувати проєкт';
+  document.getElementById('f-type').value = isExt ? 'external' : 'github';
   document.getElementById('f-slug').value = p.slug || '';
   document.getElementById('f-name').value = p.name || '';
   document.getElementById('f-client').value = p.client || '';
   document.getElementById('f-niche').value = p.niche || '';
   document.getElementById('f-repo').value = p.repo || '';
   document.getElementById('f-key').value = p.admin_key || '';
+  document.getElementById('f-main').value = p.links?.main || '';
+  document.getElementById('f-notes').value = p.notes || '';
   document.getElementById('f-status').value = p.status || 'active';
   document.getElementById('f-index').value = idx;
+  toggleTypeFields();
   document.getElementById('modal-bg').classList.add('visible');
 }
 
@@ -504,25 +569,42 @@ function closeModal() {
 function saveProject() {
   const slug = document.getElementById('f-slug').value.trim();
   const name = document.getElementById('f-name').value.trim();
+  const type = document.getElementById('f-type').value;
   if (!slug || !name) { alert('Slug і назва обов\'язкові'); return; }
   const idxRaw = document.getElementById('f-index').value;
-  const data = {
+  const base = {
     slug,
     name,
     client: document.getElementById('f-client').value.trim(),
     niche: document.getElementById('f-niche').value.trim(),
-    repo: document.getElementById('f-repo').value.trim(),
-    admin_key: document.getElementById('f-key').value.trim(),
     status: document.getElementById('f-status').value,
-    data_path: 'data.json',
-    links: {
-      audit: `https://krasprod.github.io/${slug}/`,
-      progress: `https://krasprod.github.io/${slug}/progress.html`
-    }
+    notes: document.getElementById('f-notes').value.trim(),
+    type
   };
+  let data;
+  if (type === 'external') {
+    const main = document.getElementById('f-main').value.trim();
+    data = {
+      ...base,
+      repo: '',
+      admin_key: '',
+      data_path: '',
+      links: { main }
+    };
+  } else {
+    data = {
+      ...base,
+      repo: document.getElementById('f-repo').value.trim(),
+      admin_key: document.getElementById('f-key').value.trim(),
+      data_path: 'data.json',
+      links: {
+        audit: `https://krasprod.github.io/${slug}/`,
+        progress: `https://krasprod.github.io/${slug}/progress.html`
+      }
+    };
+  }
   if (idxRaw === '') {
     data.started = new Date().toISOString().slice(0,10);
-    data.notes = '';
     state.data.projects.push(data);
   } else {
     const idx = parseInt(idxRaw, 10);
