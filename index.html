@@ -457,7 +457,8 @@ function renderCard(p, idx) {
     <div class="project-actions">
       <a class="btn btn-primary" href="${buildAdminUrl(p)}" target="_blank">🔐 Відкрити як адмін →</a>
       <div class="actions-row">
-        <button class="btn btn-ghost btn-mini" onclick="copyLink('${clientUrl}', this)">📋 Посилання для клієнта</button>
+        <a class="btn btn-ghost btn-mini" href="${clientUrl}" target="_blank">👁 Відкрити як клієнт</a>
+        <button class="btn btn-ghost btn-mini" onclick="copyLink('${clientUrl}', this)">📋 Копіювати посилання</button>
         <a class="btn btn-ghost btn-mini" href="${p.links?.audit || '#'}" target="_blank">📄 Аудит</a>
       </div>
       ${state.admin ? `
