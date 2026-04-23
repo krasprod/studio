@@ -3,7 +3,7 @@
     "owner": "Андрій Красік",
     "role": "Маркетинг-аналітик · таргетолог",
     "city": "Київ",
-    "last_updated": "2026-04-20T15:00:00"
+    "last_updated": "2026-04-23T10:15:00"
   },
   "projects": [
     {
@@ -38,6 +38,23 @@
         "main": "https://deft-boba-7cc3db.netlify.app/#overview"
       },
       "notes": "Клієнт переглядає таблицю. Чекаємо підтвердження «ок» або список правок."
+    },
+    {
+      "slug": "oksana-zaporozhets",
+      "name": "Оксана Запорожець · психологиня",
+      "client": "Оксана Запорожець",
+      "niche": "Психологиня · Дарницький р-н, Київ",
+      "type": "github",
+      "status": "active",
+      "started": "2026-04-23",
+      "repo": "krasprod/oksana-audit",
+      "admin_key": "oksana2026",
+      "data_path": "data.json",
+      "links": {
+        "audit": "https://krasprod.github.io/oksana-audit/",
+        "progress": "https://krasprod.github.io/oksana-audit/progress.html"
+      },
+      "notes": "Аудит готовий. Квік-віни: статус на qui.help + відгуки + синхронізація bio. Далі лендинг і Meta Ads."
     }
   ]
 }
