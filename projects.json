@@ -3,7 +3,7 @@
     "owner": "Андрій Красік",
     "role": "Маркетинг-аналітик · таргетолог",
     "city": "Київ",
-    "last_updated": "2026-04-23T08:09:24.416Z"
+    "last_updated": "2026-04-23T08:09:36.269Z"
   },
   "projects": [
     {
@@ -29,7 +29,7 @@
       "client": "Клієнт (уточнити)",
       "niche": "Таблиця пересчету · фінансовий облік",
       "type": "external",
-      "status": "review",
+      "status": "archived",
       "started": "2026-04-20",
       "repo": "",
       "admin_key": "",
