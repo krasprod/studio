@@ -630,6 +630,9 @@ function markDirty() {
   state.dirty = true;
   state.data.studio.last_updated = new Date().toISOString();
   document.getElementById('admin-status').innerHTML = '<span class="admin-unsaved">НЕ ЗБЕРЕЖЕНО</span>';
+  if (state.autosaveDisabled) return;
+  clearTimeout(state._autosaveTimer);
+  state._autosaveTimer = setTimeout(() => { saveData(); }, 1500);
 }
 
 async function saveData() {
@@ -663,12 +666,11 @@ async function saveData() {
     const j = await r.json();
     state.sha = j.content.sha;
     state.dirty = false;
-    document.getElementById('admin-status').innerHTML = '✓ Збережено. GitHub Pages оновиться за ~1 хв.';
-    setTimeout(() => {
-      if (!state.dirty) document.getElementById('admin-status').textContent = 'Зміни ще не збережено.';
-    }, 5000);
+    state.autosaveDisabled = false;
+    document.getElementById('admin-status').innerHTML = '✓ Автозбережено · ' + new Date().toLocaleTimeString('uk-UA').slice(0,5);
   } catch (e) {
-    document.getElementById('admin-status').textContent = '❌ Помилка: ' + e.message;
+    state.autosaveDisabled = true;
+    document.getElementById('admin-status').innerHTML = '❌ ' + e.message + '<br><span style="font-size:11px;color:var(--muted)">Автозбереження вимкнено. Виправте токен і натисніть «Зберегти дашборд».</span>';
     if (e.message.includes('401') || e.message.includes('Bad credentials')) {
       localStorage.removeItem('gh_pat_studio');
     }
